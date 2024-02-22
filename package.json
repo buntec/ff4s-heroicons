@@ -1,0 +1,9 @@
+{
+  "name": "ff4s-heroicons",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "devDependencies": {
+    "heroicons": "^2.1.1"
+  }
+}
