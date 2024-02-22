@@ -20,7 +20,8 @@ ThisBuild / developers := List(tlGitHubDev("buntec", "Christoph Bunte"))
 ThisBuild / tlFatalWarnings := false
 ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin("11"))
 
-lazy val generateShoelace = taskKey[Unit]("generates the component definitions")
+lazy val generateHeroicons =
+  taskKey[Unit]("generates the component definitions")
 
 lazy val ff4sVersion = "0.22-2b55c7f-SNAPSHOT"
 lazy val scalajsDomVersion = "2.8.0"
@@ -34,28 +35,29 @@ lazy val fs2DomVersion = "0.2.1"
 lazy val monocleVersion = "3.2.0"
 
 lazy val root =
-  tlCrossRootProject.aggregate(`ff4s-shoelace`, examples)
+  tlCrossRootProject.aggregate(`ff4s-heroicons`, examples)
 
 lazy val `ff4s-heroicons` = (project in file("ff4s-heroicons"))
   .enablePlugins(ScalaJSPlugin)
   .settings(
-    generateShoelace := {
-      new ShoelaceGenerator(
-        onlineSourceRoot =
-          "https://github.com/buntec/ff4s-shoelace/blob/master",
-        customElementsJsonPath =
-          "node_modules/@shoelace-style/shoelace/dist/custom-elements.json",
-        baseOutputDirectoryPath = "ff4s-shoelace/src/main/scala/ff4s/shoelace",
-        baseOutputPackagePath = "ff4s.shoelace"
-      ).generate()
+    generateHeroicons := {
+      import cats.effect.unsafe.implicits.global
+      Heroicons
+        .generate(
+          svgRootPath = "./node_modules/heroicons/",
+          baseOutputDirectoryPath =
+            "ff4s-heroicons/src/main/scala/ff4s/heroicons",
+          baseOutputPackagePath = "ff4s.heroicons"
+        )
+        .unsafeRunSync()
     },
     Compile / compile := {
-      generateShoelace.value
+      generateHeroicons.value
       (Compile / compile).value
     }
   )
   .settings(
-    name := "ff4s-shoelace",
+    name := "ff4s-heroicons",
     libraryDependencies ++= Seq(
       "io.github.buntec" %%% "ff4s" % ff4sVersion,
       "org.scala-js" %%% "scalajs-dom" % scalajsDomVersion
@@ -79,4 +81,4 @@ lazy val examples = (project in file("examples"))
       "dev.optics" %%% "monocle-macro" % monocleVersion
     )
   )
-  .dependsOn(`ff4s-shoelace`)
+  .dependsOn(`ff4s-heroicons`)

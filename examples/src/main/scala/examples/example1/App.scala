@@ -42,17 +42,6 @@ class App[F[_]](implicit val F: Async[F])
       }
     )
 
-    _ <- Stream
-      .fixedDelay(100.millis)
-      .zipWithIndex
-      .map(_._2)
-      .evalMap(i =>
-        store.dispatch(Action.ModifyState(_.copy(progress = i.toInt % 100)))
-      )
-      .compile
-      .drain
-      .background
-
     _ <- store.state
       .map(_.darkMode)
       .discrete
