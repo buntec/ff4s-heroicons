@@ -1,5 +1,9 @@
 # ff4s-heroicons
 
+
+[Heroicons](https://heroicons.com/) for [ff4s](https://github.com/buntec/ff4s).
+
+
 No releases yet but you can try a snapshot:
 
 ```

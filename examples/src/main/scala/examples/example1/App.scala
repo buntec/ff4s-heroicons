@@ -22,7 +22,7 @@ trait View extends ff4s.heroicons.Heroicons[State, Action] {
   val rowClass = "flex flex-row items-center gap-2"
 
   val view = div(
-    cls := "flex flex-col items-center gap-2",
+    cls := "p-2 flex flex-col items-center gap-2",
     span(cls := "text-2xl", "Heroicons"),
     span("outline"),
     div(
