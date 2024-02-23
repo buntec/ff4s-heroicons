@@ -23,7 +23,7 @@ ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin("11"))
 lazy val generateHeroicons =
   taskKey[Unit]("generates the component definitions")
 
-lazy val ff4sVersion = "0.22.0-1-6083e41-SNAPSHOT"
+lazy val ff4sVersion = "0.23.0"
 lazy val scalajsDomVersion = "2.8.0"
 lazy val circeVersion = "0.14.6"
 lazy val catsVersion = "2.10.0"
