@@ -1,62 +1,83 @@
 package examples.example1
 
-import cats.effect.Async
-import cats.effect.implicits._
+import cats.effect.Concurrent
 import cats.syntax.all._
-import fs2.Stream
-import org.scalajs.dom
 
-import scala.concurrent.duration.*
-
-import scalajs.js
-
-case class State(
-    darkMode: Boolean = false
-)
+case class State()
 
 sealed trait Action
 
 object Action {
 
-  case class ModifyState(f: State => State) extends Action
+  case object Noop extends Action
 
 }
 
-trait View { dsl: ff4s.Dsl[State, Action] =>
+trait View extends ff4s.heroicons.Heroicons[State, Action] {
+  dsl: ff4s.Dsl[State, Action] =>
 
   import html._
+  import heroicons._
 
-  val view = div("hello")
+  val rowClass = "flex flex-row items-center gap-2"
+
+  val view = div(
+    cls := "flex flex-col items-center gap-2",
+    span(cls := "text-2xl", "Heroicons"),
+    span("outline"),
+    div(
+      cls := rowClass,
+      List(
+        outline.`academic-cap`,
+        outline.`paper-airplane`,
+        outline.`pencil-square`,
+        outline.`chevron-right`,
+        outline.`puzzle-piece`
+      ).map(_.withClass("w-6 h-6"))
+    ),
+    span("solid"),
+    div(
+      cls := rowClass,
+      List(
+        solid.`academic-cap`,
+        solid.`paper-airplane`,
+        solid.`pencil-square`,
+        solid.`chevron-right`,
+        solid.`puzzle-piece`
+      ).map(_.withClass("w-6 h-6"))
+    ),
+    span("mini"),
+    div(
+      cls := rowClass,
+      List(
+        mini.`academic-cap`,
+        mini.`paper-airplane`,
+        mini.`pencil-square`,
+        mini.`chevron-right`,
+        mini.`puzzle-piece`
+      ).map(_.withClass("w-5 h-5"))
+    ),
+    span("micro"),
+    div(
+      cls := rowClass,
+      List(
+        micro.`academic-cap`,
+        micro.`paper-airplane`,
+        micro.`pencil-square`,
+        micro.`chevron-right`,
+        micro.`puzzle-piece`
+      ).map(_.withClass("w-4 h-4"))
+    )
+  )
 
 }
 
-class App[F[_]](implicit val F: Async[F])
-    extends ff4s.App[F, State, Action]
-    with View {
+class App[F[_]: Concurrent] extends ff4s.App[F, State, Action] with View {
 
-  override val store = for {
-
-    store <- ff4s.Store[F, State, Action](State())(_ =>
-      _ match {
-        case Action.ModifyState(f) => state => f(state) -> none
-      }
-    )
-
-    _ <- store.state
-      .map(_.darkMode)
-      .discrete
-      .changes
-      .evalMap(darkMode =>
-        if (darkMode) {
-          F.delay(dom.document.body.className = "dark")
-        } else {
-          F.delay(dom.document.body.className = "")
-        }
-      )
-      .compile
-      .drain
-      .background
-
-  } yield store
+  override val store = ff4s.Store[F, State, Action](State())(_ =>
+    _ match {
+      case Action.Noop => state => state -> none
+    }
+  )
 
 }

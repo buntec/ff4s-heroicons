@@ -38,13 +38,19 @@
                 nix.enable = true;
               };
 
-              scripts.watch-examples.exec = ''
-                sbt '~examples/fastLinkJS'
-              '';
+              scripts = {
+                generate-sources.exec = ''
+                  sbt generateHeroicons
+                '';
 
-              scripts.serve-examples.exec = ''
-                live-server ./examples/ --port=8080 --entry-file=index.html
-              '';
+                watch-examples.exec = ''
+                  sbt '~examples/fastLinkJS'
+                '';
+
+                serve-examples.exec = ''
+                  live-server ./examples/ --port=8080 --entry-file=index.html
+                '';
+              };
 
             }];
           };
