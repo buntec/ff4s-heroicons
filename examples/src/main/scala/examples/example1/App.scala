@@ -1,23 +1,18 @@
 package examples.example1
 
 import cats.effect.Concurrent
-import cats.syntax.all._
+import cats.syntax.all.*
 
 case class State()
 
-sealed trait Action
+enum Action:
+  case Noop
 
-object Action {
-
-  case object Noop extends Action
-
-}
-
-trait View extends ff4s.heroicons.Heroicons[State, Action] {
+trait View extends ff4s.heroicons.Heroicons[State, Action]:
   dsl: ff4s.Dsl[State, Action] =>
 
-  import html._
-  import heroicons._
+  import html.*
+  import heroicons.*
 
   val rowClass = "flex flex-row items-center gap-2"
 
@@ -70,14 +65,7 @@ trait View extends ff4s.heroicons.Heroicons[State, Action] {
     )
   )
 
-}
+class App[F[_]: Concurrent] extends ff4s.App[F, State, Action] with View:
 
-class App[F[_]: Concurrent] extends ff4s.App[F, State, Action] with View {
-
-  override val store = ff4s.Store[F, State, Action](State())(_ =>
-    _ match {
-      case Action.Noop => state => state -> none
-    }
-  )
-
-}
+  override val store = ff4s.Store.pure[F, State, Action](State()):
+    case (Action.Noop, state) => state
