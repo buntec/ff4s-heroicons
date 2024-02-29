@@ -1,29 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-
-<head>
-  <meta charset="UTF-8">
-  <title>ff4s-heroicons</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style type="text/tailwindcss">
-    body {
-      @apply font-thin;
-    }
-  </style>
-</head>
-
-<body>
-  <div id="app"></div>
-  <script type="text/javascript">
-    var process = {
-      env: {
-        'CATS_EFFECT_TRACING_MODE': 'NONE',
-        'FF4S_DEBUG': 'TRUE',
+  <head>
+    <meta charset="UTF-8" />
+    <title>ff4s-heroicons</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style type="text/tailwindcss">
+      body {
+        @apply font-thin;
       }
-    };
-    var ff4s_state;
-  </script>
-  <script type="text/javascript" src="target/scala-2.13/examples-fastopt/main.js"></script>
-</body>
+    </style>
+  </head>
 
+  <body>
+    <div id="app"></div>
+    <script
+      type="text/javascript"
+      src="target/scala-3.3.1/examples-fastopt/main.js"
+    ></script>
+  </body>
 </html>
