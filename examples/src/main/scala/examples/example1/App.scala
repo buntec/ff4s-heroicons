@@ -1,14 +1,16 @@
 package examples.example1
 
 import cats.effect.Concurrent
-import cats.syntax.all.*
 
 case class State()
 
-enum Action:
-  case Noop
+sealed trait Action
 
-trait View extends ff4s.heroicons.Heroicons[State, Action]:
+object Action {
+  case object Noop extends Action
+}
+
+trait View extends ff4s.heroicons.Heroicons[State, Action] {
   dsl: ff4s.Dsl[State, Action] =>
 
   import html.*
@@ -65,7 +67,12 @@ trait View extends ff4s.heroicons.Heroicons[State, Action]:
     )
   )
 
-class App[F[_]: Concurrent] extends ff4s.App[F, State, Action] with View:
+}
 
-  override val store = ff4s.Store.pure[F, State, Action](State()):
+class App[F[_]: Concurrent] extends ff4s.App[F, State, Action] with View {
+
+  override val store = ff4s.Store.pure[F, State, Action](State()) {
     case (Action.Noop, state) => state
+  }
+
+}

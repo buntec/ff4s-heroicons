@@ -63,7 +63,6 @@ lazy val `ff4s-heroicons` = (project in file("ff4s-heroicons"))
 lazy val examples = (project in file("examples"))
   .enablePlugins(ScalaJSPlugin, NoPublishPlugin)
   .settings(
-    crossScalaVersions := Seq(scala3),
     scalaJSUseMainModuleInitializer := true,
     libraryDependencies ++= Seq(
       "io.github.buntec" %%% "ff4s" % ff4sVersion,
