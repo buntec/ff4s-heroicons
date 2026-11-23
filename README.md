@@ -3,7 +3,7 @@
 [Heroicons](https://heroicons.com/) (v2.2.0) for [ff4s](https://github.com/buntec/ff4s).
 
 ```scala
-libraryDependencies += "io.github.buntec" %%% "ff4s-heroicons" % "0.0.1"
+libraryDependencies += "io.github.buntec" %%% "ff4s-heroicons" % "0.1.0"
 ```
 
 Mix `ff4s.heroicons.Heroicons[State, Action]` into your ff4s app to get the
