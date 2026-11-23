@@ -20,6 +20,9 @@ object Heroicons {
     case object Mini extends Variant
     case object Micro extends Variant
 
+    // fixed order, so the generated file does not depend on directory walk order
+    val all: List[Variant] = List(Outline, Solid, Mini, Micro)
+
   }
 
   def generate(
@@ -59,28 +62,37 @@ object Heroicons {
         "",
         "// format: off",
         "",
-        "trait Heroicons[S, A] { self: ff4s.Dsl[S, A] => ",
+        "trait Heroicons[S, A] { self: ff4s.Dsl[S, A] =>",
         "",
         "  object heroicons {",
         ""
       ) ++
-        Stream.emits(icons.groupBy(_.variant).toList).flatMap {
-          case (variant, icons) =>
-            Stream(
-              s"    object ${variant.toString.toLowerCase} {",
-              ""
-            ) ++ Stream
-              .emits(icons)
-              .evalMap { icon =>
-                Files[IO].readUtf8(icon.path).compile.foldMonoid.tupleLeft(icon)
-              }
-              .flatMap { case (icon, markup) =>
-                Stream(
-                  "",
-                  s"""      lazy val `${icon.name}` = literal(\"\"\"${markup.trim}\"\"\")""",
-                  ""
-                )
-              } ++ Stream("    }", "")
+        Stream.emits(Icon.all).flatMap { variant =>
+          val variantIcons = icons.filter(_.variant == variant).sortBy(_.name)
+          Stream(
+            s"    object ${variant.toString.toLowerCase} {",
+            ""
+          ) ++ Stream
+            .emits(variantIcons)
+            .evalMap { icon =>
+              Files[IO].readUtf8(icon.path).compile.foldMonoid.tupleLeft(icon)
+            }
+            .flatMap { case (icon, markup) =>
+              Stream(
+                "",
+                s"""      lazy val `${icon.name}` = literal(\"\"\"${markup.trim}\"\"\")""",
+                ""
+              )
+            } ++ Stream(
+            "",
+            "      /** All icons of this variant, with their names, in alphabetical order. */",
+            "      lazy val all: List[(String, V)] = List("
+          ) ++ Stream
+            .emits(
+              variantIcons.map(i => s"""        "${i.name}" -> `${i.name}`""")
+            )
+            .intersperse(",\n")
+            .foldMonoid ++ Stream("      )", "    }", "")
         } ++ Stream("", "  }", "", "}"))
         // .evalTap(line => IO.println(line))
         .through(Files[IO].writeUtf8Lines(outFile))
