@@ -1,13 +1,14 @@
-# Link the examples and serve them at http://127.0.0.1:8080/ (e.g. `just serve-examples 2.13`)
+# Link the examples and serve them at http://127.0.0.1:8080/ (e.g. `just serve-examples 2.13`);
+# the page reloads whenever the bundle is relinked, e.g. by `just watch-examples`
 serve-examples scala="3":
     sbt '++ {{scala}}' examples/fastLinkJS
-    python3 -m http.server 8080 --bind 127.0.0.1 --directory examples
+    npm exec vite -- examples --host 127.0.0.1 --port 8080 --strictPort
 
 # Recompile the examples on every source change (e.g. `just watch-examples 2.13`)
 watch-examples scala="3":
     sbt '++ {{scala}}' '~examples/fastLinkJS'
 
-# Install the JavaScript dependencies (heroicons, and jsdom for the tests) from package-lock.json
+# Install the JavaScript dependencies (heroicons, jsdom for the tests, Vite for the examples) from package-lock.json
 install:
     npm ci
 
